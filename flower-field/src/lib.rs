@@ -1,6 +1,30 @@
-struct Field {
-    flower: Vec<bool>
-    
+struct Flower {
+    data: Vec<bool>,
+    width: usize,
+}
+
+impl Flower {
+    fn parse(garden: &[&str]) -> Self {
+        let data: Vec<bool> = garden
+            .iter()
+            .flat_map(|str| {
+                str.chars().map(|char| match char {
+                    '·' => false,
+                    '*' => true,
+                    _ => unreachable!(),
+                })
+            })
+            .collect();
+        Self { data, width: 5 }
+    }
+    fn get(&self, index: i32) -> Option<bool> {
+        if index < 0 {
+            None
+        } else {
+            Some(self.data[index as usize])
+        }
+    }
+    fn count(&mut self, index: i32) -
 }
 
 pub fn annotate(garden: &[&str]) -> Vec<String> {

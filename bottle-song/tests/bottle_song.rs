@@ -76,7 +76,6 @@ fn first_two_verses() {
 }
 
 #[test]
-#[ignore]
 fn last_three_verses() {
     assert_eq!(
         recite(3, 3).trim(),
