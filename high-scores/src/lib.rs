@@ -25,7 +25,8 @@ impl HighScores {
 
     pub fn personal_top_three(&self) -> Vec<u32> {
         let mut scores = self.scores.clone();
-        scores.sort_unstable_by(|a,b| b.cmp(a));
+        // sort_unstable_by(...) much faster when order of equal elements doesn't matter
+        scores.sort_unstable_by(|a, b| b.cmp(a));
         scores.into_iter().take(3).collect()
     }
 }

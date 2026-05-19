@@ -3,9 +3,9 @@ use sum_of_multiples::*;
 #[test]
 fn no_multiples_within_limit() {
     let factors = &[3, 5];
-    let limit = 1;
+    let limit = 20;
     let output = sum_of_multiples(limit, factors);
-    let expected = 0;
+    let expected = 78;
     assert_eq!(output, expected);
 }
 
