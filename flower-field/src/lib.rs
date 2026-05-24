@@ -1,34 +1,64 @@
-struct Flower {
-    data: Vec<bool>,
-    width: usize,
-}
+// All the inputs and outputs are in ASCII.
+// Rust Strings and &str are utf8, so while one might expect "Hello".chars() to be simple,
+// it actually has to check each character to see if it's 1, 2, 3 or 4 u8s long.
+// If we know a &str is ASCII then we can call .as_bytes() and refer to the underlying data as a &[u8] (byte slice).
+// Iterating over a slice of ASCII bytes is much quicker as there are no codepoints involved.
 
-impl Flower {
-    fn parse(garden: &[&str]) -> Self {
-        let data: Vec<bool> = garden
-            .iter()
-            .flat_map(|str| {
-                str.chars().map(|char| match char {
-                    '·' => false,
-                    '*' => true,
-                    _ => unreachable!(),
-                })
-            })
-            .collect();
-        Self { data, width: 5 }
-    }
-    fn get(&self, index: i32) -> Option<bool> {
-        if index < 0 {
-            None
-        } else {
-            Some(self.data[index as usize])
-        }
-    }
-    fn count(&mut self, index: i32) -
-}
+// Can you complete the challenge without cloning the input?
 
 pub fn annotate(garden: &[&str]) -> Vec<String> {
-    todo!(
-        "\nAnnotate each square of the given garden with the number of flowers that surround said square (blank if there are no surrounding flowers):\n{garden:#?}\n"
-    );
+    let mut result = vec![];
+    let rows = garden.len();
+    if rows != 0 {
+        let columns = garden[0].len();
+        for y in 0..rows {
+            let mut string = vec![];
+            for x in 0..columns {
+                if garden[y].as_bytes()[x] == b' ' {
+                    let new = check_flower(garden, x, y, rows, columns);
+                    if new != '0' {
+                        string.push(new);
+                    } else {
+                        string.push(' ');
+                    }
+                }
+                if garden[y].as_bytes()[x] == b'*' {
+                    string.push('*');
+                }
+            }
+            let string = string.into_iter().collect::<String>();
+            result.push(string);
+        }
+    }
+    result
+}
+
+fn check_flower(garden: &[&str], x: usize, y: usize, rows: usize, columns: usize) -> char {
+    let directions: [(isize, isize); 8] = [
+        (-1, -1),
+        (-1, 0),
+        (-1, 1),
+        (0, -1),
+        (0, 1),
+        (1, -1),
+        (1, 0),
+        (1, 1),
+    ];
+    let mut count = 0;
+    let mut new_directions = vec![];
+
+    for direction in directions {
+        let (dx, dy) = direction;
+        let nx = x as isize - dx;
+        let ny = y as isize - dy;
+        if nx < columns as isize && nx >= 0 && ny < rows as isize && ny >= 0 {
+            new_directions.push((nx as usize, ny as usize))
+        }
+    }
+    for (nx, ny) in new_directions {
+        if garden[ny].as_bytes()[nx] == b'*' {
+            count += 1;
+        }
+    }
+    char::from_digit(count, 10).unwrap()
 }
